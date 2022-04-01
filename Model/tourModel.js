@@ -107,7 +107,7 @@ tourSchema.pre('save', function (next) {
 //*This happens after save a document to databse
 //*
 tourSchema.post('save', function (doc, next) {
-  console.log(doc);
+  // console.log(doc);
   next();
 });
 //* Query Middleware
@@ -120,13 +120,11 @@ tourSchema.pre(/^find/, function (next) {
 });
 //*This Run after save to document only on find Query
 tourSchema.post(/^find/, function (docs, next) {
-  console.log(docs);
   next();
 });
 //*Agregation Middleware
 tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  console.log(this.pipeline());
   next();
 });
 const Tour = mongoose.model('Tour', tourSchema);

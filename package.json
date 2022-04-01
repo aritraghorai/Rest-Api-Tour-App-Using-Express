@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start:dev": "nodemon server.js",
-    "start:pro": "NODE_ENV=production nodemon server.js"
+    "start:pro": "NODE_ENV=production nodemon server.js",
+    "debug": "ndb server.js"
   },
   "devDependencies": {
     "eslint": "^8.9.0",
