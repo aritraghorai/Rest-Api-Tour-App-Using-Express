@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -104,6 +103,7 @@ tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+
 //*This happens after save a document to databse
 //*
 tourSchema.post('save', function (doc, next) {
@@ -127,6 +127,7 @@ tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;

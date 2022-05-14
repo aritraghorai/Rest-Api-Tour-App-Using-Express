@@ -40,6 +40,12 @@ const handleValidationError = (err) => {
   const message = `Invlid Inpur Data ${errors.join('.')}`;
   return new AppError(message, 400);
 };
+//*Invalid Jwt token error
+const handleJWTTokenError = () =>
+  new AppError('Invalid Token Please Login agaim', 401);
+//*Handle Invalid Token error
+const handleTokenExpireError = () =>
+  new AppError('Token Has Been Invalid', 401);
 module.exports = (err, _req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -60,6 +66,10 @@ module.exports = (err, _req, res, next) => {
     if (err.name === 'ValidationError') {
       error = handleValidationError(error);
     }
+    if (err.name === 'JsonWebTokenError') {
+      error = handleJWTTokenError();
+    }
+    if (err.name === 'TokenExpiredError') error = handleTokenExpireError();
     sentErrorProd(error, res);
   }
 

@@ -4,14 +4,45 @@ const AppError = require('./Utils/appError');
 const tourRouter = require('./Routes/tourRoutes');
 const userRouter = require('./Routes/userRouter');
 const globalErrorHandler = require('./Controller/errorController');
-
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitizer = require('mongo-sanitizer');
+const xss = require('xss-clean');
 const app = express();
+const hpp = require('hpp');
 //* Middleware
-app.use(express.json());
+
+//*Body Parser
+app.use(express.json({ limit: '10kb' }));
+//*Data Sanization againest nosql injection
+app.use(mongoSanitizer());
+//*Data Sanitizer againest xss injection
+app.use(xss());
 if (process.env.NODE_ENV === 'devolopment') {
   app.use(morgan('dev'));
 }
-
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  mesaage: 'Too Manu request from this ip,please wait try an hout later',
+});
+//*Rate Limiter
+app.use('/api', limiter);
+//*Security Http Header
+app.use(helmet());
+//*Prevent http parameter polution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingQuantity',
+      'difficulty',
+      'price',
+      'maxGroupSize',
+    ],
+  })
+);
+//*Serving Static Files
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req, _res, next) => {
