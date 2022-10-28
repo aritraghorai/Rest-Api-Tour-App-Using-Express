@@ -46,6 +46,8 @@ const handleJWTTokenError = () =>
 //*Handle Invalid Token error
 const handleTokenExpireError = () =>
   new AppError('Token Has Been Invalid', 401);
+
+//*Global Error Handler
 module.exports = (err, _req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';

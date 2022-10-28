@@ -4,11 +4,12 @@ const router = express.Router();
 const {
   getAllUsers,
   creatUser,
-  getUsers,
+  getUsersById,
   updateUser,
   deleteUser,
   updateMe,
   deleteMe,
+  getMe,
 } = require('../Controller/userController');
 const {
   signUp,
@@ -17,6 +18,7 @@ const {
   resetPassword,
   updatePassword,
   protect,
+  restrictTo,
 } = require('../Controller/authController');
 /*
 !Create a checkbody middleware
@@ -31,10 +33,19 @@ router.post('/signup', signUp);
 router.post('/login', login);
 router.post('/forgotPassword', forgotPassword);
 router.patch('/resetPassword/:token', resetPassword);
-router.patch('/updatePassword', protect, updatePassword);
-router.patch('/updateMe', protect, updateMe);
-router.delete('/deleteMe', protect, deleteMe);
+
+//*Protect All after this middleware
+router.use(protect);
+
+router.get('/me', getMe, getUsersById);
+router.patch('/updatePassword', updatePassword);
+router.patch('/updateMe', updateMe);
+router.delete('/deleteMe', deleteMe);
+
+//*After this all route reserve for admin
+router.use(restrictTo('admin'));
+
 router.route('/').get(getAllUsers).post(creatUser);
-router.route('/:id').get(getUsers).patch(updateUser).delete(deleteUser);
+router.route('/:id').get(getUsersById).patch(updateUser).delete(deleteUser);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const Tour = require('../Model/tourModel');
 const ApiFeature = require('../Utils/apiFeature');
-const AppError = require('../Utils/appError');
+const factoryHandler = require('./handlerFactory');
 const catchAsync = require('../Utils/catchAsync');
 //*Check id middleware
 // exports.checkId = (req, res, next, val) => {
@@ -18,62 +18,36 @@ exports.aliasTopTours = (req, _res, next) => {
   next();
 };
 
-exports.getAllTours = catchAsync(async (req, res, _next) => {
-  const Feature = new ApiFeature(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitField()
-    .pagination();
-  const allTour = await Feature.query;
-  //* query.sort().select().skip().limit()
-  res.status(200).json({
-    status: 'Success',
-    length: allTour.length,
-    data: {
-      tours: allTour,
-    },
-  });
-});
+exports.getAllTours = factoryHandler.getAll(Tour);
 
-exports.addTour = catchAsync(async (req, res, _next) => {
-  const newTour = await Tour.create(req.body);
-  res.status(201).json({
-    status: 'Success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
-exports.getTourByID = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
-  res.status(200).json({
-    status: 'Success',
-    data: {
-      tour: tour,
-    },
-  });
-});
-exports.updateTour = catchAsync(async (req, res, _next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  res.status(201).json({
-    status: 'Success',
-    data: {
-      tour: tour,
-    },
-  });
-});
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndRemove(req.params.id);
-  res.status(204).json({
-    status: 'Success',
-    data: {
-      tour: tour,
-    },
-  });
-});
+exports.addTour = factoryHandler.createOne(Tour);
+
+exports.getTourByID = factoryHandler.getOne(Tour, { path: 'reviews' });
+// exports.updateTour = catchAsync(async (req, res, _next) => {
+//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
+//   res.status(201).json({
+//     status: 'Success',
+//     data: {
+//       tour: tour,
+//     },
+//   });
+// });
+exports.updateTour = factoryHandler.updateOne(Tour);
+// exports.deleteTour = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findByIdAndRemove(req.params.id);
+//   res.status(204).json({
+//     status: 'Success',
+//     data: {
+//       tour: tour,
+//     },
+//   });
+// });
+//!Using Factory Function
+exports.deleteTour = factoryHandler.deleteOne(Tour);
+
 //*Get Tour Details
 //?Frist Agregation Pipeline
 exports.getTourStates = catchAsync(async (_req, res, _next) => {

@@ -1,6 +1,7 @@
 const User = require('../Model/userModel');
 const AppError = require('../Utils/appError');
 const catchAsync = require('../Utils/catchAsync');
+const factoryHandler = require('./handlerFactory');
 
 const filterObj = (obj, ...allowFilled) => {
   const newObj = {};
@@ -12,16 +13,11 @@ const filterObj = (obj, ...allowFilled) => {
   return newObj;
 };
 
-exports.getAllUsers = (req, res, next) => {
-  res.status(500).json({ status: 'error', measssage: 'Not Yet Implemented' });
-  //* TODO:
-};
 exports.creatUser = (req, res, next) => {
-  res.status(500).json({ status: 'error', measssage: 'Not Yet Implemented' });
-  //* TODO:
-};
-exports.getUsers = (req, res, next) => {
-  res.status(500).json({ status: 'error', measssage: 'Not Yet Implemented' });
+  res.status(500).json({
+    status: 'error',
+    measssage: 'Not Yet Implemented Go To user/login',
+  });
 };
 exports.updateUser = (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
@@ -36,11 +32,6 @@ exports.updateUser = (req, res, next) => {
     status: 'success',
   });
   res.status(500).json({ status: 'error', measssage: 'Not Yet Implemented' });
-  //* TODO:
-};
-exports.deleteUser = (req, res, next) => {
-  res.status(500).json({ status: 'error', measssage: 'Not Yet Implemented' });
-  //* TODO:
 };
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
@@ -52,7 +43,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
   }
   const filterBody = filterObj(req.body, 'name', 'email');
-  console.log(filterBody);
   //*Update User Document
   const updateUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
     new: true,
@@ -71,3 +61,14 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     status: 'success',
   });
 });
+
+exports.getMe = (req, res, next) => {
+  console.log(req.user);
+  console.log('hi');
+  req.params.id = req.user._id;
+  next();
+};
+
+exports.getUsersById = factoryHandler.getOne(User);
+exports.getAllUsers = factoryHandler.getAll(User);
+exports.deleteUser = factoryHandler.deleteOne(User);

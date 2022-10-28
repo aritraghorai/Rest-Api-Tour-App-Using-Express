@@ -8,13 +8,6 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A Tour Must Have A Name'],
       unique: true,
       //*This is not useful is not in this case
-      /* validate: {
-      //   validator: function (val) {
-      //     return validator.isAlpha(val, 'en-US');
-      //   },
-      //   message: 'Invalid Tour Name',
-       },
-       */
       maxlength: [40, 'A tour Name max length of 40 Character'],
       minlength: [10, 'A tour Name min length of 10 Character'],
     },
@@ -35,11 +28,11 @@ const tourSchema = new mongoose.Schema(
         message: 'Difficulity is only easy,medium,difficult',
       },
     },
-    retingAvg: {
+    ratingsAverage: {
       type: Number,
       default: 4.5,
     },
-    ratingQuantity: {
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
@@ -85,6 +78,38 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    //*Location For The Tour
+    startLocation: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    //*All Locations
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    //* Toor Guide
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -95,6 +120,14 @@ const tourSchema = new mongoose.Schema(
 //*Virtual Property Which is Calculate by the another field
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+tourSchema.index({ price: 1, retingAvg: 1 });
+
+//* Virtual Property Propulate Review
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 //*This an example of document middleware
@@ -120,6 +153,13 @@ tourSchema.pre(/^find/, function (next) {
 });
 //*This Run after save to document only on find Query
 tourSchema.post(/^find/, function (docs, next) {
+  next();
+});
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v',
+  });
   next();
 });
 //*Agregation Middleware

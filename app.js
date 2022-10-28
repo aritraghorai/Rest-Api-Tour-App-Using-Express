@@ -3,10 +3,11 @@ const morgan = require('morgan');
 const AppError = require('./Utils/appError');
 const tourRouter = require('./Routes/tourRoutes');
 const userRouter = require('./Routes/userRouter');
+const reviewRoute = require('./Routes/reviewRoutes');
 const globalErrorHandler = require('./Controller/errorController');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const mongoSanitizer = require('mongo-sanitizer');
+const mongoSanitizer = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const app = express();
 const hpp = require('hpp');
@@ -53,6 +54,7 @@ app.use((req, _res, next) => {
 //*Routes
 app.use('/api/v1/tour', tourRouter);
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/review', reviewRoute);
 //*It Routes is not a valid
 app.all('*', (req, res, next) => {
   // res.status(404).json({

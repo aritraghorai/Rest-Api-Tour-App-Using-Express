@@ -55,7 +55,7 @@ exports.login = carchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }
-  createAndSentToken(user._id, res);
+  return createAndSentToken(user._id, res);
 });
 exports.protect = carchAsync(async (req, res, next) => {
   //*Get Token check it is exist
