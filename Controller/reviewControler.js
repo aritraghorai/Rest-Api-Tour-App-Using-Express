@@ -9,7 +9,7 @@ const { Router } = require('express');
 
 exports.setUserAndTourId = (req, res, next) => {
   req.body.tour = req.params.tourId;
-  if (req.body.user) req.body.user = req.user._id;
+  if (req.user) req.body.user = req.user._id;
   next();
 };
 exports.getAllReview = factoryHandler.getAll(Review);

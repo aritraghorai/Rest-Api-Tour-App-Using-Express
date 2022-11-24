@@ -34,10 +34,7 @@ router
   )
   .get(getMounthyPlan);
 router.route('/top-5-chep').get(aliasTopTours, getAllTours);
-router
-  .route('/')
-  .get(getAllTours)
-  .post(protect, restrictTo(['admin', 'lead-guide']), addTour);
+router.route('/').get(getAllTours).post(protect, addTour);
 router
   .route('/:id')
   .get(getTourByID)

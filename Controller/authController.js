@@ -77,7 +77,7 @@ exports.protect = carchAsync(async (req, res, next) => {
   //*Check user still exist
   const freshUser = await User.findById(decoded.id);
   if (!freshUser) {
-    return next(AppError('The user belonging to user does not exist', 401));
+    return next(new AppError('The user belonging to user does not exist', 401));
   }
   //*Check User Change password after jwt
   if (freshUser.changePassWordAfter(decoded.iat)) {
