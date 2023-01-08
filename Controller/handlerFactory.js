@@ -9,14 +9,11 @@ exports.deleteOne = (Model) =>
     if (!doc) {
       return next(new AppError('No Document Find For The Id', 404));
     }
-    // res.status(204).json({
-    //   status: 'Success',
-    //   data: {
-    //     doc: null,
-    //   },
-    // });
     res.status(204).json({
-      doc: null,
+      status: 'Success',
+      data: {
+        doc: null,
+      },
     });
   });
 
@@ -30,11 +27,10 @@ exports.updateOne = (Model) =>
     if (!doc) {
       return next(new AppError('No Document Found', 404));
     }
-    // res.status(201).json({
-    //   status: 'Success',
-    //   data: { data: doc },
-    // });
-    res.status(201).json(doc);
+    res.status(201).json({
+      status: 'Success',
+      data: { data: doc },
+    });
   });
 
 //*CreateOne Handler Function
@@ -62,13 +58,12 @@ exports.getOne = (Model, popOptions) =>
     if (!doc) {
       return next(new AppError('No Document Found', 404));
     }
-    // res.status(200).json({
-    //   status: 'Success',
-    //   data: {
-    //     data: doc,
-    //   },
-    // });
-    res.status(200).json(doc);
+    res.status(200).json({
+      status: 'Success',
+      data: {
+        data: doc,
+      },
+    });
   });
 
 exports.getAll = (Model) =>
@@ -88,12 +83,11 @@ exports.getAll = (Model) =>
       .pagination();
     const docs = await Feature.query;
     //* query.sort().select().skip().limit()
-    // res.status(200).json({
-    //   status: 'Success',
-    //   length: docs.length,
-    //   data: {
-    //     data: docs,
-    //   },
-    // });
-    res.status(200).json(docs);
+    res.status(200).json({
+      status: 'Success',
+      length: docs.length,
+      data: {
+        data: docs,
+      },
+    });
   });

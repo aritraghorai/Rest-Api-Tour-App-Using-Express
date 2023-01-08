@@ -123,6 +123,7 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 tourSchema.index({ price: 1, retingAvg: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 //* Virtual Property Propulate Review
 tourSchema.virtual('reviews', {
@@ -164,10 +165,10 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 //*Agregation Middleware
-tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 

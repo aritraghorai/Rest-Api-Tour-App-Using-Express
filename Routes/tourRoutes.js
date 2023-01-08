@@ -10,6 +10,8 @@ const {
   aliasTopTours,
   getTourStates,
   getMounthyPlan,
+  getTourWithin,
+  getDistances,
 } = require('../Controller/tourController');
 
 //!Import Auth Handler Function
@@ -33,6 +35,13 @@ router
     '/mounthly-plan/:year'
   )
   .get(getMounthyPlan);
+
+//*Geolocatrion search
+router.get('/tours-within/:distance/center/:latlng/unit/:unit', getTourWithin);
+//* /tour-within?distance=233&center=-40,45&unit=mi
+//* /tours-within/233/center/-40,45/unit/mi
+router.route('/distances/:latlng/unit/:unit').get(getDistances);
+
 router.route('/top-5-chep').get(aliasTopTours, getAllTours);
 router.route('/').get(getAllTours).post(protect, addTour);
 router

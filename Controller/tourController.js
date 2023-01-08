@@ -2,6 +2,7 @@ const Tour = require('../Model/tourModel');
 const ApiFeature = require('../Utils/apiFeature');
 const factoryHandler = require('./handlerFactory');
 const catchAsync = require('../Utils/catchAsync');
+const AppError = require('../Utils/appError');
 //*Check id middleware
 // exports.checkId = (req, res, next, val) => {
 //   if (tours[tours.length - 1].id < val) {
@@ -122,5 +123,52 @@ exports.getMounthyPlan = catchAsync(async (req, res, _next) => {
     data: {
       plan,
     },
+  });
+});
+
+exports.getTourWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  if (!lat || !lng) {
+    return next(new AppError('Please provide in the for mar of lat,lng', 400));
+  }
+  const radious = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+  const tour = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radious] } },
+  });
+  res.status(300).json({
+    status: 'ok',
+    data: tour,
+  });
+});
+
+exports.getDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  if (!lat || !lng) {
+    return next(new AppError('Please provide in the for mar of lat,lng', 400));
+  }
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng * 1, lat * 1],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: 0.001,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+  res.status(300).json({
+    status: 'ok',
+    data: distances,
   });
 });

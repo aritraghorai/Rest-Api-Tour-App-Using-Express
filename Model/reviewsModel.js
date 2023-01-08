@@ -52,6 +52,7 @@ reviewSchema.pre(/^find/, function (next) {
 
 reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
+//!Find average rating and update on tour model
 reviewSchema.statics.calcAverageRating = async function (tourId) {
   const stats = await this.aggregate([
     {
