@@ -4,12 +4,19 @@ const AppError = require('./Utils/appError');
 const tourRouter = require('./Routes/tourRoutes');
 const userRouter = require('./Routes/userRouter');
 const reviewRoute = require('./Routes/reviewRoutes');
+const viewRouter = require('./Routes/viewRoutes');
 const globalErrorHandler = require('./Controller/errorController');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitizer = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const path = require('path');
 const app = express();
+
+//*Set Templete engine as pug
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 const hpp = require('hpp');
 //* Middleware
 
@@ -43,8 +50,9 @@ app.use(
     ],
   })
 );
+
 //*Serving Static Files
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, _res, next) => {
   req.requestTime = new Date().toISOString();
@@ -52,6 +60,7 @@ app.use((req, _res, next) => {
 });
 
 //*Routes
+app.use('/', viewRouter);
 app.use('/api/v1/tour', tourRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/review', reviewRoute);
